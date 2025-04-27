@@ -1,31 +1,27 @@
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
 // @todo: DOM узлы
-const placesList = document.querySelector('.places__list');
+const cardsContainer = document.querySelector('.places__list');
 const deleteButton = document.querySelector('.card__delete-button');
-const addButton = document.querySelector('.profile__add-button');
+
 // @todo: Функция создания карточки
-const creatCard = function (name, link, delFunc){
+const createCard = function (cardData, delFunc){
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
-    cardElement.querySelector('.card__image').alt = name;
-    cardElement.querySelector('.card__image').src = link;
-    cardElement.querySelector('.card__title').textContent = name;
-    cardElement.querySelector('.card__delete-button').addEventListener('click', delFunc);
+    const card = document.querySelector('.card');
+    const cardImage = cardElement.querySelector('.card__image');
+    const cardTitle = cardElement.querySelector('.card__title');
+    const buttonDelete = cardElement.querySelector('.card__delete-button');
+    cardImage.alt = cardData.name;
+    cardImage.src = cardData.link;
+    cardTitle.textContent = cardData.name;
+    buttonDelete.addEventListener('click', () => delFunc(card)); //Подскажите, почему удаляется только одна карточка?
     return cardElement;
 }
 // @todo: Функция удаления карточки
-function deleteCard(evt){
-    evt.target.parentNode.remove();
+function deleteCard(card) {
+    card.remove();
 }
 // @todo: Вывести карточки на страницу
-
 initialCards.forEach(function (item) {
-    placesList.append(creatCard(item.name, item.link, deleteCard));
+    cardsContainer.append(createCard(item, deleteCard));
 });
-
-
-/*addButton.addEventListener('click', function () {
-    placesList.append(creatCard(initialCards[0].name, initialCards[0].link, deleteCard));
-  });
- */ 
-
