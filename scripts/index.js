@@ -7,14 +7,13 @@ const deleteButton = document.querySelector('.card__delete-button');
 // @todo: Функция создания карточки
 const createCard = function (cardData, delFunc){
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
-    const card = document.querySelector('.card');
     const cardImage = cardElement.querySelector('.card__image');
     const cardTitle = cardElement.querySelector('.card__title');
     const buttonDelete = cardElement.querySelector('.card__delete-button');
     cardImage.alt = cardData.name;
     cardImage.src = cardData.link;
     cardTitle.textContent = cardData.name;
-    buttonDelete.addEventListener('click', () => delFunc(card)); //Подскажите, почему удаляется только одна карточка?
+    buttonDelete.addEventListener('click', () => delFunc(cardElement));
     return cardElement;
 }
 // @todo: Функция удаления карточки
