@@ -1,5 +1,6 @@
 import '../pages/index.css'
-import { initialCards } from './cards.js'
+import { initialCards, createCard, deleteCard, likeFunc} from './cards.js'
+import { openModal, closeModal} from './modal.js'
 
 
 
@@ -11,55 +12,67 @@ allPopup.forEach((popup) => {
 
 
 // @todo: Темплейт карточки
-const cardTemplate = document.querySelector('#card-template').content;
+export const cardTemplate = document.querySelector('#card-template').content;
 // @todo: DOM узлы
 const cardsContainer = document.querySelector('.places__list');
-const deleteButton = document.querySelector('.card__delete-button');
-const profile__edit_button = document.querySelector('.profile__edit-button');
-const profile__add_button = document.querySelector('.profile__add-button');
-const popup_type_image = document.querySelector('.popup_type_image');
-// const formElement = document.querySelector('.popup__form');
-// const nameInput = formElement.querySelector('.popup__input_type_name');
-// const jobInput = formElement.querySelector('.popup__input_type_description');
+const editButton = document.querySelector('.profile__edit-button');
+const addButton = document.querySelector('.profile__add-button');
+const popupTypeEdit = document.querySelector('.popup_type_edit');
+const popupNewCard = document.querySelector('.popup_type_new-card');
 
-// @todo: Функция создания карточки
-const createCard = function (cardData, delFunc, likeFunc, contentImageOpen){
-    const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
-    const cardImage = cardElement.querySelector('.card__image');
-    const cardTitle = cardElement.querySelector('.card__title');
-    const buttonDelete = cardElement.querySelector('.card__delete-button');
-    const buttonLike = cardElement.querySelector('.card__like-button');
-    cardImage.alt = cardData.name;
-    cardImage.src = cardData.link;
-    cardTitle.textContent = cardData.name;
-    buttonDelete.addEventListener('click', () => delFunc(cardElement));
-    buttonLike.addEventListener('click', () => likeFunc(buttonLike));
-    cardImage.addEventListener('click', () => contentImageOpen(cardImage));
-    return cardElement;
-}
-// @todo: Функция удаления карточки
-function deleteCard(card) {
-    card.remove();
-}
 
-function likeFunc(buttonLike){
-    buttonLike.classList.toggle('card__like-button_is-active');
-}
 
-// @todo: Вывести карточки на страницу
+
 initialCards.forEach(function (item) {
     cardsContainer.append(createCard(item, deleteCard, likeFunc, contentImageOpen));
 });
 
 
-profile__edit_button.addEventListener('click', profileEditOpen);
-profile__add_button.addEventListener('click', newCardOpen);
-//cardsContainer.addEventListener('click', contentImageOpen);
+editButton.addEventListener('click', () => profileEditOpen(popupTypeEdit));
+addButton.addEventListener('click', () => addCardOpen(popupNewCard));
+
+
+function profileEditOpen(popup){
+    openModal(popup);
+    popup.querySelector('.popup__input_type_name').placeholder = document.querySelector('.profile__title').textContent
+    popup.querySelector('.popup__input_type_description').placeholder = document.querySelector('.profile__description').textContent
+    popupClosed(popup);
+    submitFormEditProfile(popup);
+}
+
+function addCardOpen(popup){
+    openModal(popup);
+    popupClosed(popup);
+    submitFormNewCard(popup);
+}
+
+function popupClosed(popup){
+    const popupClose = popup.querySelector('.popup__close');
+    popupClose.addEventListener('click',() => closeModal(popup));
+
+    function clousePopupAndDelHandle(popup){
+        closeModal(popup);
+        document.removeEventListener('click', removeClassOpenedClickOverlay);
+        document.removeEventListener('keydown', removeClassOpenedPressKey);
+    }
+    function removeClassOpenedClickOverlay(evt){
+        if(evt.target == popup){
+            clousePopupAndDelHandle(popup);
+        }
+    }
+    function removeClassOpenedPressKey(evt){
+        if(evt.key == 'Escape'){
+            clousePopupAndDelHandle(popup);
+        }
+    }
+    document.addEventListener('click',  removeClassOpenedClickOverlay);
+    document.addEventListener('keydown',  removeClassOpenedPressKey);
+};
+
 
 function contentImageOpen(cardImage){
     const popup_type_image = document.querySelector('.popup_type_image');
     popup_type_image.classList.add('popup_is-opened');
-    console.log(cardImage);
     popup_type_image.querySelector('.popup__image').src = cardImage.src;
     popup_type_image.querySelector('.popup__image').alt = cardImage.alt;
     popup_type_image.querySelector('.popup__caption').textContent = cardImage.alt;
@@ -67,46 +80,7 @@ function contentImageOpen(cardImage){
 }
 
 
-function profileEditOpen(){
-    const popup_type_edit = document.querySelector('.popup_type_edit');
-    popup_type_edit.classList.add('popup_is-opened');
-    popup_type_edit.querySelector('.popup__input_type_name').placeholder = document.querySelector('.profile__title').textContent
-    popup_type_edit.querySelector('.popup__input_type_description').placeholder = document.querySelector('.profile__description').textContent
-    popupClosed(popup_type_edit);
-    submitFormEditProfile(popup_type_edit);
-}
 
-function newCardOpen(){
-    const popup_new_card = document.querySelector('.popup_type_new-card');
-    popup_new_card.classList.add('popup_is-opened');
-    popupClosed(popup_new_card);
-    submitFormNewCard(popup_new_card);
-}
-
-function popupClosed(popup){
-    const popupClose = popup.querySelector('.popup__close');
-    popupClose.addEventListener('click',() => popup.classList.remove('popup_is-opened'));
-    function removeClassOpened(){
-        popup.classList.remove('popup_is-opened');
-        document.removeEventListener('click', removeClassOpened);
-        document.removeEventListener('keydown', removeClassOpenedPressKey);
-        if(popup.classList.contains('popup_type_new-card')){
-            console.log('test');
-        }
-    }
-    function removeClassOpenedClickOverlay(evt){
-        if(evt.target == popup){
-            removeClassOpened();
-        }
-    }
-    function removeClassOpenedPressKey(evt){
-        if(evt.key == 'Escape'){
-            removeClassOpened();
-        }
-    }
-    document.addEventListener('click', removeClassOpenedClickOverlay);
-    document.addEventListener('keydown', removeClassOpenedPressKey);
-};
 
 function submitFormEditProfile(popup){
     const formElement = popup.querySelector('.popup__form');
