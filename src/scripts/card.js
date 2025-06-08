@@ -67,20 +67,3 @@ export function likeFunc(buttonLike, cardId, countLike){
 
 
 
-// const counterLikes = (cardId, countLike) => {
-//       fetch(`https://nomoreparties.co/v1/wff-cohort-39/cards`, {
-//         headers: {
-//             authorization: '1f32eed6-4700-423b-84f1-c35d36de2fbb'
-//         }
-//         })
-//         .then(res => res.json())
-//         .then( (result) => {
-//           // console.log(result);
-//           result.forEach(element => {
-//             if(element._id == cardId){
-//               console.log(element.likes.length)
-//               countLike.textContent = element.likes.length
-//             }
-//           });
-//         })
-//       }

@@ -1,7 +1,7 @@
 
 
 const showInputError = (formElement, inputElement, errorMessage, obj) => {
-    console.log('test+');
+
     const formError= formElement.querySelector(`.${inputElement.id}-error`);
   inputElement.classList.add(obj.inputErrorClass);
   formError.textContent = errorMessage;
@@ -9,7 +9,7 @@ const showInputError = (formElement, inputElement, errorMessage, obj) => {
 };
 
 const hideInputError = (formElement, inputElement, obj) => {
-    console.log('test-');
+
     const formError = formElement.querySelector(`.${inputElement.id}-error`);
   inputElement.classList.remove(obj.inputErrorClass);
  formError.classList.remove(obj.errorClass);
@@ -19,7 +19,7 @@ const hideInputError = (formElement, inputElement, obj) => {
 
 
 const isValid = (formElement, inputElement, obj) => {
-    console.log('isValidRun')
+
     if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   } else {
