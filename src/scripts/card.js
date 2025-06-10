@@ -1,5 +1,6 @@
+import {deleteCardFetch, deleteLikeFetch, addLikeFetch} from './api.js'
 
-export const createCard = function (cardData, delFunc, likeFunc, contentImageOpen){
+export const createCard = function (cardData, delFunc, likeFunc, contentImageOpen, userId){
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
@@ -14,56 +15,47 @@ export const createCard = function (cardData, delFunc, likeFunc, contentImageOpe
   buttonDelete.addEventListener('click', () => delFunc(cardElement, cardData._id));
   buttonLike.addEventListener('click', () => likeFunc(buttonLike, cardData._id, countLike));
   cardImage.addEventListener('click', () => contentImageOpen(cardData.link, cardData.name));
-  if(cardData.owner._id !== "040654428fb28bc42167382a"){
+  if(cardData.owner._id !== userId){
     buttonDelete.remove()
   }
-  if(cardData.likes.find( elem => elem._id === '040654428fb28bc42167382a')){
+  if(cardData.likes.find( elem => elem._id === userId)){
     buttonLike.classList.toggle('card__like-button_is-active');
   }
   return cardElement;
 }
 
 export function deleteCard(card, cardId) {
-  fetch(`https://nomoreparties.co/v1/wff-cohort-39/cards/${cardId}`, {
-        method: 'DELETE',
-        headers: {
-            authorization: '1f32eed6-4700-423b-84f1-c35d36de2fbb',
-            'Content-Type': 'application/json'
-        }
+  deleteCardFetch(cardId)
+        .then(() => {
+          card.remove();
         })
-        .then(res => res.json())
-          .then((data) => {
-          console.log(data);
-        })
-  card.remove();
+        .catch((err) => {
+          console.log(err);
+          })
 }
 
 
 
 export function likeFunc(buttonLike, cardId, countLike){
     if(buttonLike.classList.contains('card__like-button_is-active')){
-    fetch(`https://nomoreparties.co/v1/wff-cohort-39/cards/likes/${cardId}`, {
-        method: 'DELETE',
-        headers: {
-            authorization: '1f32eed6-4700-423b-84f1-c35d36de2fbb',
-            'Content-Type': 'application/json'
-          }
+        deleteLikeFetch(cardId)
+        .then((res) => {
+          countLike.textContent = res.likes.length;
+          buttonLike.classList.toggle('card__like-button_is-active');   
         })
-        .then(res => res.json())
-        .then(res => countLike.textContent = res.likes.length)
+        .catch((err) => {
+          console.log(err);
+          })
     }else{
-    fetch(`https://nomoreparties.co/v1/wff-cohort-39/cards/likes/${cardId}`, {
-        method: 'PUT',
-        headers: {
-            authorization: '1f32eed6-4700-423b-84f1-c35d36de2fbb',
-            'Content-Type': 'application/json'
-          }
+      addLikeFetch(cardId)
+        .then((res) => {
+          countLike.textContent = res.likes.length;
+          buttonLike.classList.toggle('card__like-button_is-active');
         })
-        .then(res => res.json())
-        .then(res => countLike.textContent = res.likes.length)
-      }  
-  buttonLike.classList.toggle('card__like-button_is-active');   
+        .catch((err) => {
+          console.log(err);
+          })
+      } 
 }
-
 
 
