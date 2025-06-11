@@ -73,10 +73,14 @@ function contentImageOpen(link, name){
 function submitFormEditProfile(evt) {
     evt.preventDefault(); 
     renderLoading(true, buttonSubmitEditProfile);
-    profileTitle.textContent = nameInput.value;
-    profileDescription.textContent = jobInput.value;
+    // profileTitle.textContent = nameInput.value;
+    // profileDescription.textContent = jobInput.value;
     submitProfileValue(nameInput.value, jobInput.value)
-      .then(()=> closeModal(popupTypeEdit))
+      .then(()=> {
+            profileTitle.textContent = nameInput.value;
+    profileDescription.textContent = jobInput.value;
+    closeModal(popupTypeEdit);
+      })
       .catch((err) => {
       console.log(err);
       })
@@ -90,14 +94,14 @@ function submitFormNewCard(evt) {
         submitCardValue(inputCardName.value, inputUrl.value)
           .then((cardData) => {
                 cardsContainer.prepend(createCard(cardData, deleteCard, likeFunc, contentImageOpen, userId));
+                formPopupNewCard.reset();
+                clearValidation(formPopupNewCard, obj);
+                closeModal(popupNewCard);
           })
           .catch((err) => {
           console.log(err);
           })
           .finally(() => renderLoading(false, buttonSubmitNewCard)); 
-    formPopupNewCard.reset();
-    clearValidation(formPopupNewCard, obj);
-    closeModal(popupNewCard);
 }
 
 
@@ -105,7 +109,12 @@ function submitFormEditAvatar(evt) {
      evt.preventDefault(); 
      renderLoading(true, buttonSubmitEditAvatar);
     submitAvatarValue(inputAvatarLink.value)
-      .then((res) => profileAvatar.setAttribute('style', `background-image: url(${res.avatar});`))
+      .then((res) =>{
+        profileAvatar.setAttribute('style', `background-image: url(${res.avatar});`)
+        formPopupTypeEditAvatar.reset();
+        clearValidation(popupTypeEditAvatar, obj);
+        closeModal(popupTypeEditAvatar);
+      })
         .catch((err) => {
         console.log(err);
         })
@@ -115,8 +124,8 @@ function submitFormEditAvatar(evt) {
 
 
 editButton.addEventListener('click', () => profileEditOpen(popupTypeEdit));
-addButton.addEventListener('click', () => {disableButtonSubmit(popupNewCard, obj); openModal(popupNewCard)});
-profileImage.addEventListener('click', () => {disableButtonSubmit(popupTypeEditAvatar, obj);openModal(popupTypeEditAvatar)});
+addButton.addEventListener('click', () => {clearValidation(formPopupTypeEditAvatar, obj), openModal(popupNewCard)});
+profileImage.addEventListener('click', () => {clearValidation(formPopupTypeEditAvatar, obj), openModal(popupTypeEditAvatar)});
 popupTypeEditClouse.addEventListener('click', () => closeModal(popupTypeEdit));
 popupNewCardClouse.addEventListener('click', () => closeModal(popupNewCard));
 popupTypeImageClouse.addEventListener('click', () => closeModal(popupTypeImage));
@@ -126,28 +135,6 @@ formPopupNewCard.addEventListener('submit', submitFormNewCard);
 formPopupTypeEditAvatar.addEventListener('submit', submitFormEditAvatar);
 
 enableValidation(obj);
-
-
-// const clearValidation = (profileForm, validationConfig) => {
-//     const button = profileForm.querySelector(`${validationConfig.submitButtonSelector}`)
-//     button.disabled = true;
-//     button.classList.add(validationConfig.inactiveButtonClass);
-//     const formError = profileForm.querySelectorAll('.form__input-error');
-//     formError.forEach((item) => {
-//     item.classList.remove(obj.errorClass);
-//     item.textContent = ''})
-//     const inputElement = profileForm.querySelectorAll(validationConfig.inputSelector)
-//     inputElement.forEach(elem => elem.classList.remove(obj.inputErrorClass))    
-// }
-
-const disableButtonSubmit = (form, validationConfig) => {
-    const inputs = form.querySelectorAll('.popup__input')
-    inputs.forEach( (input) => {if(input.value == ''){
-    const button = form.querySelector(`${validationConfig.submitButtonSelector}`)
-    button.disabled = true;
-    button.classList.add(validationConfig.inactiveButtonClass);
-    }})
-}
 
 
 
