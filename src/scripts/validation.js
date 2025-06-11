@@ -63,23 +63,26 @@ const hasInvalidInput = (inputList) => {
 
 const toggleButtonState = (inputList, buttonElement, obj) => {
   if (hasInvalidInput(inputList)) {
-        buttonElement.disabled = true;
-    buttonElement.classList.add(obj.inactiveButtonClass);
-  } else {
     disabledButtonState( buttonElement, obj)
+  } else {
+    buttonElement.disabled = false;
+    buttonElement.classList.remove(obj.inactiveButtonClass);
   }
 }; 
 
 const disabledButtonState = (buttonElement, obj) => {
-    buttonElement.disabled = false;
-    buttonElement.classList.remove(obj.inactiveButtonClass);
+    buttonElement.disabled = true;
+    buttonElement.classList.add(obj.inactiveButtonClass);
 }
 
 export const clearValidation = (form, validationConfig) => {
     const inputs = form.querySelectorAll('.popup__input')
+    const inputElements = form.querySelectorAll(validationConfig.inputSelector) 
+    inputElements.forEach((inputElement) => {hideInputError(form, inputElement, validationConfig) }) 
     inputs.forEach( (input) => {if(input.value == ''){
     const button = form.querySelector(`${validationConfig.submitButtonSelector}`)
-    button.disabled = true;
-    button.classList.add(validationConfig.inactiveButtonClass);
+    disabledButtonState(button, validationConfig); 
     }})
 }
+
+//ну вроде сейчас точно правильно.. вроде
